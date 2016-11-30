@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <title>Home Assistant</title>
+  <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.light_blue-orange.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background-color: #E5E5E5;
+    }
+
+    .mdl-layout__header {
+      color: white;
+    }
+
+    .mdl-layout__header-row .mdl-navigation__link {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <!-- Title -->
+        <span class="mdl-layout-title">Home Assistant</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+        <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="https://home-assistant.io">Visit Homepage</a>
+        </nav>
+      </div>
+    </header>
+    <main class="mdl-layout__content">
+      <div class="page-content"><!-- Your content goes here --></div>
+    </main>
+  </div>
+
+  <script src='build/app.js'></script>
+</body>
+</html>

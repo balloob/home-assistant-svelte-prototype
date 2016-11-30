@@ -1,0 +1,50 @@
+<style>
+ .mdl-card {
+  margin-right: 16px;
+  margin-bottom: 16px;
+ }
+
+ .mdl-card__title {
+  text-transform: capitalize;
+ }
+
+ .mdl-list {
+  padding: 0;
+ }
+</style>
+
+<div class="mdl-card mdl-shadow--2dp">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">{{group.attributes.friendly_name}}</h2>
+  </div>
+  <div class="mdl-card__supporting-text">
+
+    <div class="mdl-list">
+      {{#each entList as entity}}
+        {{#if entity.attributes.friendly_name}}
+          <EntityRow entity='{{entity}}' />
+        {{/if}}
+      {{/each}}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  import { getGroupEntities } from 'home-assistant-js-websocket';
+
+  import EntityRow from './EntityRow.html';
+
+  export default {
+    computed: {
+      entList: (entities, group) => {
+        const result = getGroupEntities(entities, group);
+        return Object.keys(result).map(key => result[key]);
+      },
+    },
+
+    components: {
+      EntityRow
+    }
+  }
+</script>

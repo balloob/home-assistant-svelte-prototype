@@ -1,0 +1,45 @@
+<style>
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    padding-left: 16px;
+  }
+</style>
+
+<div class='cards' on:change='handleChange(event)'>
+  {{#each groups as group}}
+    {{#if !group.attributes.hidden}}
+      <GroupCard entities='{{entities}}' group='{{group}}' />
+    {{/if}}
+  {{/each}}
+</div>
+
+<script>
+  import GroupCard from './GroupCard.html';
+  import { splitByGroups } from 'home-assistant-js-websocket';
+
+  export default {
+    methods: {
+      handleChange({ target }) {
+        const entity_id = target.dataset.entity_id;
+        const service = target.checked ? 'turn_on' : 'turn_off';
+        this.get('conn').callService('homeassistant', service, {entity_id});
+      }
+    },
+
+    data () {
+      return {
+        entities: {}
+      };
+    },
+
+    computed: {
+      groups: entities => splitByGroups(entities).groups,
+    },
+
+    components: {
+      GroupCard
+    }
+  }
+</script>

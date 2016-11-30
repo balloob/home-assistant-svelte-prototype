@@ -1,0 +1,21 @@
+{
+  "name": "home-assistant-svelte",
+  "version": "0.1",
+  "description": "Prototype Home Assistant UI in Svelte",
+  "main": "index.js",
+  "scripts": {
+    "build": "svelte compile --format iife src/App.html > build/app.js"
+  },
+  "author": "Paulus Schoutsen",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^0.36.4",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-svelte": "^1.0.0",
+    "svelte-cli": "^1.0.2"
+  },
+  "dependencies": {
+    "home-assistant-js-websocket": "^0.5.0",
+    "rollup-watch": "^2.5.0"
+  }
+}

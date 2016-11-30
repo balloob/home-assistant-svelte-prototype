@@ -1,0 +1,33 @@
+<div class="mdl-list__item">
+  <span class="mdl-list__item-primary-content">
+    <!-- <i class="material-icons mdl-list__item-avatar">person</i> -->
+    <span>{{entity.attributes.friendly_name}}</span>
+  </span>
+  <span class="mdl-list__item-secondary-action">
+    {{#if canSwitch(entity) }}
+      <input
+        data-entity_id="{{entity.entity_id}}"
+        type="checkbox"
+        class="mdl-switch__input"
+        checked="{{ entity.state == 'on' }}"
+      />
+    {{else}}
+      {{entity.state}}
+    {{/if}}
+  </span>
+</div>
+
+<script>
+
+  import { extractDomain } from 'home-assistant-js-websocket';
+
+  const switchDomains = ['light', 'switch'];
+
+  export default {
+    helpers: {
+      canSwitch:
+        entity => switchDomains.indexOf(extractDomain(entity.entity_id)) !== -1,
+    }
+  }
+
+</script>
