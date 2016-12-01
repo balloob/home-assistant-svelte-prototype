@@ -4,7 +4,6 @@
 function auth(e){return{type:"auth",api_password:e}}function states(){return{type:"get_states"}}function config(){return{type:"get_config"}}function services(){return{type:"get_services"}}function panels(){return{type:"get_panels"}}function callService$1(e,t,n){var r={type:"call_service",domain:e,service:t};return n&&(r.service_data=n),r}function subscribeEvents$1(e){var t={type:"subscribe_events"};return e&&(t.event_type=e),t}function unsubscribeEvents(e){return{type:"unsubscribe_events",subscription:e}}function ping$1(){return{type:"ping"}}function error(e,t){return{type:"result",success:!1,error:{code:e,message:t}}}function extractResult(e){return e.result}function createConnection(e,t){var n=new Connection(e,t);return n.connect()}function getEntities(e){for(var t={},n=0;n<e.length;n++){var r=e[n];t[r.entity_id]=r;}return t}function updateState(e,t){var n=Object.assign({},e);return n[t.entity_id]=t,n}function removeState(e,t){var n=Object.assign({},e);return delete n[t],n}function subscribeEntities(e,t){return new Promise(function(n,r){function i(e){var n=e.data,r=n.entity_id,i=n.new_state;s=i?updateState(s,i):removeState(s,r),t(s);}var s=null,o=e.subscribeEvents(i,"state_changed"),c=e.getStates().then(function(e){s=getEntities(e),t(s);});Promise.all([o,c]).then(function(e){var t=e[0];return n(t)},function(){return r()});})}function extractDomain(e){return e.substr(0,e.indexOf("."))}function getGroupEntities(e,t){var n={};return t.attributes.entity_id.forEach(function(t){var r=e[t];r&&(n[r.entity_id]=r);}),n}function splitByGroups(e){var t=[],n={};return Object.keys(e).forEach(function(r){var i=e[r];"group"===extractDomain(r)?t.push(i):n[r]=i;}),t.sort(function(e,t){return e.attributes.order-t.attributes.order}),t.forEach(function(e){return e.attributes.entity_id.forEach(function(e){delete n[e];})}),{groups:t,ungrouped:n}}var ERR_CANNOT_CONNECT=1; var ERR_INVALID_AUTH=2; var ERR_CONNECTION_LOST=3; var Connection=function(e,t){this.url=e,this.options=t||{},this.commandId=1,this.commands={},this.connectionTries=0,this.eventListeners={},this.closeRequested=!1;};Connection.prototype.addEventListener=function(e,t){var n=this.eventListeners[e];n||(n=this.eventListeners[e]=[]),n.push(t);},Connection.prototype.fireEvent=function(e){var t=this;(this.eventListeners[e]||[]).forEach(function(e){return e(t)});},Connection.prototype.connect=function(){var e=this;return new Promise(function(t,n){var r=e.commands;Object.keys(r).forEach(function(e){var t=r[e];t.reject&&t.reject(error(ERR_CONNECTION_LOST,"Connection lost"));});var i=!1;e.connectionTries+=1,e.socket=new WebSocket(e.url),e.socket.addEventListener("open",function(){e.connectionTries=0;}),e.socket.addEventListener("message",function(s){var o=JSON.parse(s.data);switch(o.type){case"event":e.commands[o.id].eventCallback(o.event);break;case"result":o.success?e.commands[o.id].resolve(o):e.commands[o.id].reject(o.error),delete e.commands[o.id];break;case"pong":break;case"auth_required":e.sendMessage(auth(e.options.authToken));break;case"auth_invalid":n(ERR_INVALID_AUTH),i=!0;break;case"auth_ok":t(e),e.fireEvent("ready"),e.commandId=1,e.commands={},Object.keys(r).forEach(function(t){var n=r[t];n.eventType&&e.subscribeEvents(n.eventCallback,n.eventType).then(function(e){n.unsubscribe=e;});});}}),e.socket.addEventListener("close",function(){if(!i&&!e.closeRequested){0===e.connectionTries?e.fireEvent("disconnected"):n(ERR_CANNOT_CONNECT);var t=1e3*Math.min(e.connectionTries,5);setTimeout(function(){return e.connect()},t);}});})},Connection.prototype.close=function(){this.closeRequested=!0,this.socket.close();},Connection.prototype.getStates=function(){return this.sendMessagePromise(states()).then(extractResult)},Connection.prototype.getServices=function(){return this.sendMessagePromise(services()).then(extractResult)},Connection.prototype.getPanels=function(){return this.sendMessagePromise(panels()).then(extractResult)},Connection.prototype.getConfig=function(){return this.sendMessagePromise(config()).then(extractResult)},Connection.prototype.callService=function(e,t,n){return this.sendMessagePromise(callService$1(e,t,n))},Connection.prototype.subscribeEvents=function(e,t){var n=this;return this.sendMessagePromise(subscribeEvents$1(t)).then(function(r){var i={eventCallback:e,eventType:t,unsubscribe:function(){return n.sendMessagePromise(unsubscribeEvents(r.id)).then(function(){delete n.commands[r.id];})}};return n.commands[r.id]=i,function(){return i.unsubscribe()}})},Connection.prototype.ping=function(){return this.sendMessagePromise(ping$1())},Connection.prototype.sendMessage=function(e){this.socket.send(JSON.stringify(e));},Connection.prototype.sendMessagePromise=function(e){var t=this;return new Promise(function(n,r){t.commandId+=1;var i=t.commandId;e.id=i,t.commands[i]={resolve:n,reject:r},t.sendMessage(e);})};
 
 var template$2 = (function () {
-
   const switchDomains = ['light', 'switch'];
 
   return {
@@ -13,7 +12,6 @@ var template$2 = (function () {
         entity => switchDomains.indexOf(extractDomain(entity.entity_id)) !== -1,
     }
   }
-
 }());
 
 function renderMainFragment$2 ( root, component, target ) {
@@ -23,20 +21,17 @@ function renderMainFragment$2 ( root, component, target ) {
 	var span = document.createElement( 'span' );
 	span.className = "mdl-list__item-primary-content";
 	
-	var text = document.createTextNode( "\n    " );
-	span.appendChild( text );
-	
 	var span1 = document.createElement( 'span' );
 	
-	var text1 = document.createTextNode( root.entity.attributes.friendly_name );
-	span1.appendChild( text1 );
+	var text = document.createTextNode( root.entity.attributes.friendly_name );
+	span1.appendChild( text );
 	
 	span.appendChild( span1 );
 	
 	div.appendChild( span );
 	
-	var text2 = document.createTextNode( "\n  " );
-	div.appendChild( text2 );
+	var text1 = document.createTextNode( "\n  " );
+	div.appendChild( text1 );
 	
 	var span2 = document.createElement( 'span' );
 	span2.className = "mdl-list__item-secondary-action";
@@ -59,7 +54,7 @@ function renderMainFragment$2 ( root, component, target ) {
 
 	return {
 		update: function ( changed, root ) {
-			text1.data = root.entity.attributes.friendly_name;
+			text.data = root.entity.attributes.friendly_name;
 			
 			if ( template$2.helpers.canSwitch(root.entity) ) {
 				if ( !ifBlock_0 ) {
@@ -94,11 +89,9 @@ function renderMainFragment$2 ( root, component, target ) {
 			
 			
 			
-			text.parentNode.removeChild( text );
 			
 			
-			
-			text2.parentNode.removeChild( text2 );
+			text1.parentNode.removeChild( text1 );
 			
 			
 			
