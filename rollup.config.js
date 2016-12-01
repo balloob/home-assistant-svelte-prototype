@@ -1,4 +1,3 @@
-// rollup.config.js
 import svelte from 'rollup-plugin-svelte';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
