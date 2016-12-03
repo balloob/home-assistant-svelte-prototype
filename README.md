@@ -15,10 +15,10 @@ Home Assistant is an open source home automation framework. [Learn more.](https:
 
 ## Getting started
 
-The Home Assistant websocket API is currently only available in the development release but can be installed locally. To install and run the demo mode:
+The Home Assistant websocket API is available in version 0.34 and up. To install and run the demo mode:
 
 ```python3
-pip3 install --upgrade git+git://github.com/home-assistant/home-assistant.git@dev
+pip3 install homeassistant
 hass --demo
 ```
 
